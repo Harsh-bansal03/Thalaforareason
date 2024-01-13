@@ -101,32 +101,65 @@
     </div>
 
     <script>
-        function checkThala() {
-            var userInput = document.getElementById("inputField").value;
-            var outputContainer = document.getElementById("output-container");
-            var outputDiv = document.getElementById("output");
-            var shareButton = document.getElementById("share-button");
-            // Reset animation
-            outputDiv.classList.remove("reset-animation");
-            void outputDiv.offsetWidth; // Trigger reflow
-            outputDiv.classList.add("reset-animation");
+    function checkThala() {
+        var userInput = document.getElementById("inputField").value;
+        var outputContainer = document.getElementById("output-container");
+        var outputDiv = document.getElementById("output");
+        var shareButton = document.getElementById("share-button");
+        var videoBackground = document.getElementById("video-background");
+        var backgroundMusic = document.getElementById("background-music");
 
-            if (userInput.length === 7 || (isNumber(userInput) && sumOfDigits(userInput) === 7)) {
-                outputDiv.innerHTML = "<span class='animated-text'>Thala for a reason</span>";
-                outputDiv.style.color = "#4CAF50"; /* Green color */
-                playVideo();
-                playMusic();
-                shareButton.style.display = "block";
-                outputContainer.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-            } else {
-                outputDiv.innerText = "Check again, not Thala!!";
-                outputDiv.style.color = "#FF0000"; /* Red color */
-                stopVideo();
-                stopMusic();
-                shareButton.style.display = "none";
-                outputContainer.style.backgroundColor = "#2196F3"; /* Blue color */
-            }
-        }
+        // Reset animation
+        outputDiv.classList.remove("reset-animation");
+        void outputDiv.offsetWidth; // Trigger reflow
+        outputDiv.classList.add("reset-animation");
+
+        if (userInput.length === 7 || (isNumber(userInput) && sumOfDigits(userInput) === 7)) {
+            outputDiv.innerHTML = "<span class='animated-text'>Thala for a reason</span>";
+            outputDiv.style.color = "#4CAF50"; /* Green color */
+            playVideo();
+            playDefaultMusic(); // Use default music for "Thala for a reason"
+            shareButton.style.display = "block";
+            outputContainer.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+            resetBackgroundImage(); // Reset background image to default
+        } else {
+            outputDiv.innerText = "Check again, not Thala!!";
+            outputDiv.style.color = "#FF0000"; /* Red color */
+            changeBackgroundImage('moye_moye.jpeg'); // Change background image for "not Thala for a reason"
+            changeBackgroundMusic('moye_moye.mp3'); // Change music for "not Thala for a reason"
+            shareButton.style.display = "none";
+            outputContainer.style.backgroundColor = "#2196F3"; /* Blue color */
+        } 
+    }
+
+    function changeBackgroundImage(imageUrl) {
+        var body = document.body;
+        body.style.backgroundImage = "url('" + imageUrl + "')";
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+    }
+
+    function resetBackgroundImage() {
+        var body = document.body;
+        body.style.backgroundImage = "url('background-image.jpg')"; // Set to default image URL
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+    }
+
+    function changeBackgroundMusic(musicUrl) {
+        var music = document.getElementById("background-music");
+        music.src = musicUrl;
+        music.load();
+        playMusic(); // Restart the new music
+    }
+
+    function playDefaultMusic() {
+        var music = document.getElementById("background-music");
+        music.src = "background_music.mp3"; // Use default music for "Thala for a reason"
+        music.load();
+        playMusic(); // Restart the default music
+    }
+
 
         function isNumber(value) {
             return /^\d+$/.test(value);
@@ -161,7 +194,7 @@
 
         function shareOnWhatsApp() {
             // Implement WhatsApp sharing logic
-            var urlToShare = "https://roaring-sunburst-aef7d7.netlify.app/"; // Replace with your actual URL
+            var urlToShare = "https://chillyfacts.com/create-whatsapp-share-button-on-websites"; // Replace with your actual URL
             var whatsappShareLink = "whatsapp://send?text=" + encodeURIComponent(urlToShare);
             window.location.href = whatsappShareLink;
         }
