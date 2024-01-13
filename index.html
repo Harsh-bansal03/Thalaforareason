@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Thala</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('background-image.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #inputField {
+            padding: 10px;
+            font-size: 16px;
+        }
+        #checkButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+        #output-container {
+            margin-top: 20px;
+        }
+        #video-background {
+            display: none;
+            width: 50%; /* Adjust the width as needed */
+            max-width: 400px; /* Set a maximum width to maintain responsiveness */
+            height: auto;
+            object-fit: cover;
+            z-index: -1;
+            margin-bottom: 10px; /* Add some spacing at the bottom */
+            padding: 120px;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            animation: thalaAnimation 2s infinite; /* Animation properties */
+        }
+        @keyframes thalaAnimation {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        .reset-animation {
+            animation: none; /* Reset animation */
+        }
+        #share-button {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <label for="inputField">Enter a  word or a number :</label>
+        <input type="text" id="inputField" maxlength="100">
+        <button id="checkButton" onclick="checkThala()">Check</button>
+
+        <div id="output-container">
+            <video id="video-background" autoplay loop muted>
+                <source src="background_video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+            <audio id="background-music" loop>
+                <source src="background_music.mp3" type="audio/mp3">
+                Your browser does not support the audio tag.
+            </audio>
+
+            <div id="output"></div>
+            <button id="share-button" onclick="shareOnWhatsApp()">Share</button>
+        </div>
+    </div>
+
+    <script>
+        function checkThala() {
+            var userInput = document.getElementById("inputField").value;
+            var outputContainer = document.getElementById("output-container");
+            var outputDiv = document.getElementById("output");
+            var shareButton = document.getElementById("share-button");
+            // Reset animation
+            outputDiv.classList.remove("reset-animation");
+            void outputDiv.offsetWidth; // Trigger reflow
+            outputDiv.classList.add("reset-animation");
+
+            if (userInput.length === 7 || (isNumber(userInput) && sumOfDigits(userInput) === 7)) {
+                outputDiv.innerHTML = "<span class='animated-text'>Thala for a reason</span>";
+                outputDiv.style.color = "#4CAF50"; /* Green color */
+                playVideo();
+                playMusic();
+                shareButton.style.display = "block";
+                outputContainer.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+            } else {
+                outputDiv.innerText = "Check again, not Thala!!";
+                outputDiv.style.color = "#FF0000"; /* Red color */
+                stopVideo();
+                stopMusic();
+                shareButton.style.display = "none";
+                outputContainer.style.backgroundColor = "#2196F3"; /* Blue color */
+            }
+        }
+
+        function isNumber(value) {
+            return /^\d+$/.test(value);
+        }
+
+        function sumOfDigits(value) {
+            return value.split('').reduce(function (acc, digit) {
+                return acc + parseInt(digit);
+            }, 0);
+        }
+
+        function playVideo() {
+            var video = document.getElementById("video-background");
+            video.style.display = "block";
+        }
+
+        function stopVideo() {
+            var video = document.getElementById("video-background");
+            video.style.display = "none";
+        }
+
+        function playMusic() {
+            var music = document.getElementById("background-music");
+            music.play();
+        }
+
+        function stopMusic() {
+            var music = document.getElementById("background-music");
+            music.pause();
+            music.currentTime = 0;
+        }
+
+        function shareOnWhatsApp() {
+            // Implement WhatsApp sharing logic
+            var urlToShare = "https://chillyfacts.com/create-whatsapp-share-button-on-websites"; // Replace with your actual URL
+            var whatsappShareLink = "whatsapp://send?text=" + encodeURIComponent(urlToShare);
+            window.location.href = whatsappShareLink;
+        }
+    </script>
+</body>
+</html>
