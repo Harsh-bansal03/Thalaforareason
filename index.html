@@ -18,12 +18,15 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh; /* Ensure full viewport height */
         }
         #container {
             background: rgba(0, 0, 0, 0.6);
             padding: 20px;
             border-radius: 10px;
+            width: 120%; /* Adjust the width as needed for mobile devices */
+            max-width: 400px; /* Set a maximum width for better readability on smaller screens */
+            margin: auto;
         }
         #inputField {
             padding: 10px;
@@ -43,17 +46,17 @@
         }
         #video-background {
             display: none;
-            width: 50%; /* Adjust the width as needed */
-            max-width: 400px; /* Set a maximum width to maintain responsiveness */
             height: auto;
             object-fit: cover;
             z-index: -1;
             margin-bottom: 10px; /* Add some spacing at the bottom */
-            padding: 120px;
+            width: 100%; /* Make the video fill the container */
+            max-width: none; /* Remove the max-width restriction */
+            padding: 0; /* Remove unnecessary padding */
         }
         #output {
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             animation: thalaAnimation 2s infinite; /* Animation properties */
         }
@@ -75,12 +78,23 @@
             color: #fff;
             border: none;
             border-radius: 5px;
+            width: 100%;
+        }
+        #reloadButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: #fff;
+            border: 1px solid black;
+            border-radius: 5px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div id="container">
-        <label for="inputField">Enter a  word or a number :</label>
+        <label for="inputField">Enter a word or a number:</label>
         <input type="text" id="inputField" maxlength="100">
         <button id="checkButton" onclick="checkThala()">Check</button>
 
@@ -89,6 +103,8 @@
                 <source src="background_video.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
+            <button id="reloadButton" onclick="reloadPage()">Reload</button>
+
 
             <audio id="background-music" loop>
                 <source src="background_music.mp3" type="audio/mp3">
@@ -101,66 +117,79 @@
     </div>
 
     <script>
-    function checkThala() {
-        var userInput = document.getElementById("inputField").value;
-        var outputContainer = document.getElementById("output-container");
-        var outputDiv = document.getElementById("output");
-        var shareButton = document.getElementById("share-button");
-        var videoBackground = document.getElementById("video-background");
-        var backgroundMusic = document.getElementById("background-music");
+        function checkThala() {
+            var userInput = document.getElementById("inputField").value;
+            var outputContainer = document.getElementById("output-container");
+            var outputDiv = document.getElementById("output");
+            var shareButton = document.getElementById("share-button");
+            var videoBackground = document.getElementById("video-background");
+            var backgroundMusic = document.getElementById("background-music");
 
-        // Reset animation
-        outputDiv.classList.remove("reset-animation");
-        void outputDiv.offsetWidth; // Trigger reflow
-        outputDiv.classList.add("reset-animation");
 
-        if (userInput.length === 7 || (isNumber(userInput) && sumOfDigits(userInput) === 7)) {
-            outputDiv.innerHTML = "<span class='animated-text'>Thala for a reason</span>";
-            outputDiv.style.color = "#4CAF50"; /* Green color */
-            playVideo();
-            playDefaultMusic(); // Use default music for "Thala for a reason"
-            shareButton.style.display = "block";
-            outputContainer.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-            resetBackgroundImage(); // Reset background image to default
-        } else {
-            outputDiv.innerText = "Check again, not Thala!!";
-            outputDiv.style.color = "#FF0000"; /* Red color */
-            changeBackgroundImage('moye_moye.jpeg'); // Change background image for "not Thala for a reason"
-            changeBackgroundMusic('moye_moye.mp3'); // Change music for "not Thala for a reason"
-            shareButton.style.display = "none";
-            stopVideo();
-            outputContainer.style.backgroundColor = "#2196F3"; /* Blue color */
-        } 
+            // Reset animation
+            outputDiv.classList.remove("reset-animation");
+            void outputDiv.offsetWidth; // Trigger reflow
+            outputDiv.classList.add("reset-animation");
+
+            if (userInput.length === 7 || (isNumber(userInput) && sumOfDigits(userInput) === 7)) {
+        outputDiv.innerHTML = "<span class='animated-text'>Thala for a reason</span>";
+        outputDiv.style.color = "#4CAF50"; 
+        stopVideo(); 
+        playVideo(); 
+        playDefaultMusic(); 
+        shareButton.style.display = "block";
+        outputContainer.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+        resetBackgroundImage(); 
+    } else {
+        outputDiv.innerText = "Check again, not Thala!!";
+        outputDiv.style.color = "#FF0000"; 
+        changeBackgroundImage('moye_moye.jpeg'); 
+        changeBackgroundMusic('moye_moye.mp3'); 
+        stopVideo(); // Stop the default video
+        playDifferentVideo(); 
+        shareButton.style.display = "none";
+        outputContainer.style.backgroundColor = "#2196F3"; 
     }
+}
+        
+    
+function playDifferentVideo() {
+    var video = document.getElementById("video-background");
+    video.src = "moyemoye.mp4"; // Set the source to the different video
+    video.load();
+    playVideo(); // Play the different video
+    setTimeout(function () {
+        stopVideo(); // Stop the different video after 10 seconds
+        playVideo(); // Play the default video
+    }, 10000);
+}
+        function changeBackgroundImage(imageUrl) {
+            var body = document.body;
+            body.style.backgroundImage = "url('" + imageUrl + "')";
+            body.style.backgroundSize = "cover";
+            body.style.backgroundPosition = "center";
+        }
 
-    function changeBackgroundImage(imageUrl) {
-        var body = document.body;
-        body.style.backgroundImage = "url('" + imageUrl + "')";
-        body.style.backgroundSize = "cover";
-        body.style.backgroundPosition = "center";
-    }
+        function resetBackgroundImage() {
+            var body = document.body;
+            body.style.backgroundImage = "url('background-image.jpg')"; // Set to default image URL
+            body.style.backgroundSize = "cover";
+            body.style.backgroundPosition = "center";
+        }
 
-    function resetBackgroundImage() {
-        var body = document.body;
-        body.style.backgroundImage = "url('background-image.jpg')"; // Set to default image URL
-        body.style.backgroundSize = "cover";
-        body.style.backgroundPosition = "center";
-    }
+        function changeBackgroundMusic(musicUrl) {
+            var music = document.getElementById("background-music");
+            music.src = musicUrl;
+            music.load();
+            playMusic(); // Restart the new music
+        }
 
-    function changeBackgroundMusic(musicUrl) {
-        var music = document.getElementById("background-music");
-        music.src = musicUrl;
-        music.load();
-        playMusic(); // Restart the new music
-    }
-
-    function playDefaultMusic() {
-        var music = document.getElementById("background-music");
-        music.src = "background_music.mp3"; // Use default music for "Thala for a reason"
-        music.load();
-        playMusic(); // Restart the default music
-    }
-
+        function playDefaultMusic() {
+            var music = document.getElementById("background-music");
+            music.src = "background_music.mp3"; // Use default music for "Thala for a reason"
+            music.load();
+            playMusic(); // Restart the default music
+        }
 
         function isNumber(value) {
             return /^\d+$/.test(value);
@@ -194,11 +223,14 @@
         }
 
         function shareOnWhatsApp() {
-            // Implement WhatsApp sharing logic
-            var urlToShare = "https://chillyfacts.com/create-whatsapp-share-button-on-websites"; // Replace with your actual URL
+            var urlToShare = "https://thalaforareasoncheck.netlify.app/";
             var whatsappShareLink = "whatsapp://send?text=" + encodeURIComponent(urlToShare);
             window.location.href = whatsappShareLink;
+        }
+        function reloadPage() {
+            location.reload();
         }
     </script>
 </body>
 </html>
+
